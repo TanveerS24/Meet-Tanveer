@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-main: #0B0D12;
+    --surface-main: #181B24;
+    --surface-raised: #212532;
+    --text-primary: #F3F4F6;
+    --text-secondary: #9CA3AF;
+    --accent-blue: #3B82F6;
+  }
+
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    overflow-x: hidden;
+  }
+}
+
+/* Skeuomorphic Glassmorphism & Depth Utility Classes */
+.skeuo-glass {
+  background: rgba(24, 27, 36, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+}
+
+.skeuo-panel {
+  background: linear-gradient(145deg, #1C202C, #141720);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.6), -4px -4px 12px rgba(255, 255, 255, 0.03);
+  border-radius: 1rem;
+}
+
+.skeuo-inset-container {
+  background: #0D0F16;
+  box-shadow: inset 4px 4px 10px rgba(0, 0, 0, 0.8), inset -2px -2px 6px rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.skeuo-btn {
+  background: linear-gradient(180deg, #2E3446 0%, #1E222D 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+  transition: all 0.15s ease-in-out;
+}
+
+.skeuo-btn:hover {
+  background: linear-gradient(180deg, #353B50 0%, #242936 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.35);
+}
+
+.skeuo-btn:active {
+  background: linear-gradient(180deg, #1A1D27 0%, #222734 100%);
+  transform: translateY(1px);
+  box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.8), inset -1px -1px 3px rgba(255, 255, 255, 0.05);
+}
+
+/* Custom Metallic Gloss Header */
+.skeuo-metal-header {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(0, 0, 0, 0.2) 100%);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0B0D12;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #212532;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2E3446;
+}
