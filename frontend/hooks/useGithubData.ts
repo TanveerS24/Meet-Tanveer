@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getGitHubDashboardData } from '../services/github.service';
-import { generateFallbackDashboardData } from '../../backend/src/github/github.graphql';
+import { getGitHubDashboardData, generateFallbackDashboardData } from '../services/github.service';
 
 export function useGithubData(username: string = 'TanveerS24') {
   return useQuery({

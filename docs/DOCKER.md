@@ -10,14 +10,20 @@ The entire portfolio ecosystem runs inside isolated Docker containers using Dock
 
 ## Available Compose Files
 
-- **`docker-compose.yml`**: Base service definitions and health checks.
-- **`docker-compose.dev.yml`**: Development environment overlay with volume mounts for hot-reloading.
+- **`docker-compose.yml`**: Base service definitions, health checks, and Docker Compose Watch rules (`develop.watch`).
+- **`docker-compose.dev.yml`**: Development environment overlay with volume mounts and live watch configuration.
 - **`docker-compose.prod.yml`**: Production overlay utilizing multi-stage build outputs.
 
 ## Common Operations
 
 ```bash
-# Start Development Environment
+# Start Containers with Live Watch Flag (Hot Reload & Auto Sync)
+docker compose up --watch
+
+# Or Run Watch Explicitly
+docker compose watch
+
+# Start Development Environment Overlay
 docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
 
 # Start Production Build
@@ -29,3 +35,8 @@ docker compose ps
 # View Backend Logs
 docker compose logs -f backend
 ```
+
+## Docker Compose Watch Rules (`develop.watch`)
+
+- **Backend**: Syncs changes in `./backend` directly into `/app` inside the container (excluding `node_modules` & `dist`). Rebuilds automatically when `./backend/package.json` changes.
+- **Frontend**: Syncs code edits in `./frontend` directly into `/app` inside the container (excluding `node_modules` & `.next`). Rebuilds automatically when `./frontend/package.json` changes.

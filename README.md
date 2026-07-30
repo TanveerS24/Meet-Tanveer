@@ -28,8 +28,11 @@ cd Meet-Tanveer
 # 2. Copy environment variables example
 cp .env.example .env
 
-# 3. Spin up PostgreSQL, Express Backend, and Next.js Frontend
-docker compose up --build
+# 3. Spin up PostgreSQL, Express Backend, and Next.js Frontend (with Live Watch)
+docker compose up --watch
+
+# Or traditional build and start:
+# docker compose up --build
 ```
 
 Access the application at:
