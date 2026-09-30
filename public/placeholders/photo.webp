@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFC93C" />
+      <stop offset="100%" stop-color="#FF6B57" />
+    </linearGradient>
+    <linearGradient id="avatarGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1F2A44" />
+      <stop offset="100%" stop-color="#121829" />
+    </linearGradient>
+  </defs>
+  <rect width="600" height="600" rx="160" fill="url(#bgGrad)" />
+  <!-- Silhouette head and body -->
+  <circle cx="300" cy="240" r="110" fill="#FFFBF5" />
+  <path d="M 140 520 C 140 380, 460 380, 460 520 Z" fill="#FFFBF5" />
+  <!-- Developer hoodie -->
+  <path d="M 170 520 C 170 410, 430 410, 430 520 Z" fill="url(#avatarGrad)" />
+  <circle cx="300" cy="240" r="95" fill="#F4F1EA" />
+  <!-- Glasses & Smile -->
+  <rect x="230" y="210" width="55" height="40" rx="10" fill="none" stroke="#1F2A44" stroke-width="8" />
+  <rect x="315" y="210" width="55" height="40" rx="10" fill="none" stroke="#1F2A44" stroke-width="8" />
+  <line x1="285" y1="230" x2="315" y2="230" stroke="#1F2A44" stroke-width="8" />
+  <path d="M 260 280 Q 300 315 340 280" fill="none" stroke="#FF6B57" stroke-width="8" stroke-linecap="round" />
+  <!-- Code Badge Tag -->
+  <rect x="200" y="460" width="200" height="50" rx="25" fill="#4ECDC4" />
+  <text x="300" y="493" font-family="Epilogue, sans-serif" font-weight="700" font-size="22" fill="#006A65" text-anchor="middle">S TANVEER</text>
+</svg>

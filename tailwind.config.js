@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -7,67 +8,104 @@ export default {
   theme: {
     extend: {
       colors: {
-        noir: {
-          950: '#050507',
-          900: '#0a0a0c',
-          850: '#0f0f13',
-          800: '#14141a',
-          700: '#1f1f28',
-          600: '#2d2d3a',
-          muted: '#8b8b9e',
-          text: '#f5f5f0',
+        surface: {
+          DEFAULT: 'var(--bg-surface)',
+          elevated: 'var(--bg-surface-elevated)',
+          low: 'var(--bg-surface-low)',
+          container: 'var(--bg-surface-container)',
+          dim: '#cfd9fb',
+          bright: '#faf8ff',
+          lowest: '#ffffff',
+          variant: '#d9e2ff',
         },
-        flame: {
-          500: '#ff4500',
-          400: '#ff6200',
-          300: '#ff8c00',
-          200: '#ffa633',
-          100: '#ffb347',
-          glow: '#ffb703',
+        'on-surface': {
+          DEFAULT: 'var(--text-primary)',
+          variant: 'var(--text-secondary)',
         },
-        neon: {
-          cyan: '#00f0ff',
-          amber: '#ffb703',
-          crimson: '#ff003c',
-        }
+        primary: {
+          DEFAULT: '#ae3123',
+          container: '#ff6b57',
+        },
+        'on-primary': {
+          DEFAULT: '#ffffff',
+          container: '#6c0000',
+        },
+        secondary: {
+          DEFAULT: '#006a65',
+          container: '#79f3ea',
+        },
+        'on-secondary': {
+          DEFAULT: '#ffffff',
+          container: '#006f69',
+        },
+        tertiary: {
+          DEFAULT: '#775a00',
+          container: '#c29400',
+          fixed: '#ffdf9a',
+          'fixed-dim': '#f4bf32',
+        },
+        'on-tertiary': {
+          DEFAULT: '#ffffff',
+          container: '#423000',
+          fixed: '#251a00',
+        },
+        sky: {
+          DEFAULT: '#5b9bff',
+          dark: '#2c64c7',
+        },
+        outline: {
+          DEFAULT: 'var(--border-structural)',
+          variant: 'var(--border-subtle)',
+        },
       },
       fontFamily: {
-        display: ['Syne', 'sans-serif'],
-        sans: ['Outfit', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'monospace'],
+        hero: ['Epilogue', 'sans-serif'],
+        headline: ['Epilogue', 'sans-serif'],
+        body: ['Inter', 'sans-serif'],
+        code: ['"JetBrains Mono"', 'monospace'],
       },
-      backgroundImage: {
-        'flame-gradient': 'linear-gradient(135deg, #ff4500 0%, #ff8c00 50%, #ffb347 100%)',
-        'noir-gradient': 'radial-gradient(circle at 50% 30%, rgba(255, 69, 0, 0.08) 0%, rgba(10, 10, 12, 0.95) 70%, #050507 100%)',
-        'card-glow': 'radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 69, 0, 0.15), transparent 40%)',
+      spacing: {
+        'gutter': '1.5rem',
+        'gutter-mobile': '1rem',
+        'margin-desktop': '3rem',
+        'margin-mobile': '1.25rem',
+        'space-xs': '0.25rem',
+        'space-sm': '0.5rem',
+        'space-md': '1rem',
+        'space-lg': '1.5rem',
+        'space-xl': '2.5rem',
+      },
+      borderRadius: {
+        'card': '24px',
+        'pill': '9999px',
+        'squircle': '16px',
       },
       boxShadow: {
-        'flame-sm': '0 0 15px -3px rgba(255, 69, 0, 0.3)',
-        'flame-md': '0 0 30px -5px rgba(255, 69, 0, 0.4)',
-        'flame-lg': '0 0 50px -10px rgba(255, 69, 0, 0.5)',
-        'flame-rim': 'inset 0 0 20px 2px rgba(255, 110, 0, 0.3), 0 0 30px rgba(255, 69, 0, 0.25)',
-      },
-      animation: {
-        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'glow-pulse': 'glow 3s ease-in-out infinite alternate',
-        'float': 'float 6s ease-in-out infinite',
-        'scanline': 'scanline 8s linear infinite',
+        'tactile': 'var(--shadow-tactile)',
+        'coral-btn': '0px 4px 0px #D95341',
       },
       keyframes: {
-        glow: {
-          '0%': { filter: 'drop-shadow(0 0 10px rgba(255,69,0,0.4))' },
-          '100%': { filter: 'drop-shadow(0 0 25px rgba(255,140,0,0.8))' },
+        wiggle: {
+          '0%, 100%': { transform: 'rotate(0deg)' },
+          '25%': { transform: 'rotate(-10deg)' },
+          '75%': { transform: 'rotate(10deg)' },
         },
-        float: {
-          '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-12px)' },
+        shine: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(200%)' },
         },
-        scanline: {
-          '0%': { transform: 'translateY(-100%)' },
-          '100%': { transform: 'translateY(1000%)' },
+        marquee: {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-50%)' },
         }
-      }
+      },
+      animation: {
+        wiggle: 'wiggle 0.5s ease-in-out',
+        shine: 'shine 0.7s ease-in-out',
+        marquee: 'marquee 35s linear infinite',
+      },
     },
   },
   plugins: [],
 }
+
