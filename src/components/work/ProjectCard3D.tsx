@@ -6,15 +6,13 @@ import { trackEvent } from '../../analytics/AnalyticsProvider';
 
 interface ProjectCard3DProps {
   project: Project;
-  onOpenCaseStudy?: (project: Project) => void;
 }
 
-export const ProjectCard3D: React.FC<ProjectCard3DProps> = ({ project, onOpenCaseStudy }) => {
+export const ProjectCard3D: React.FC<ProjectCard3DProps> = ({ project }) => {
   const { isReducedMotion } = useAnimationGate();
   const [isFlipped, setIsFlipped] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
-  // Mouse tilt spring values
   const rotateX = useSpring(0, { stiffness: 300, damping: 25 });
   const rotateY = useSpring(0, { stiffness: 300, damping: 25 });
   const glareX = useMotionValue(50);
@@ -27,11 +25,11 @@ export const ProjectCard3D: React.FC<ProjectCard3DProps> = ({ project, onOpenCas
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    const normX = (x / rect.width - 0.5) * 2; // -1 to 1
-    const normY = (y / rect.height - 0.5) * 2; // -1 to 1
+    const normX = (x / rect.width - 0.5) * 2;
+    const normY = (y / rect.height - 0.5) * 2;
 
-    rotateX.set(-normY * 8); // rotateX up to 8deg
-    rotateY.set(normX * 8); // rotateY up to 8deg
+    rotateX.set(-normY * 8);
+    rotateY.set(normX * 8);
 
     glareX.set((x / rect.width) * 100);
     glareY.set((y / rect.height) * 100);
@@ -48,6 +46,38 @@ export const ProjectCard3D: React.FC<ProjectCard3DProps> = ({ project, onOpenCas
     setIsFlipped(!isFlipped);
     trackEvent('project_card_flip', { project: project.slug, flipped: !isFlipped });
   };
+
+  // Determine banner gradient and badge style based on project badgeType
+  const getBannerStyle = () => {
+    switch (project.badgeType) {
+      case 'sih':
+        return {
+          gradient: 'from-primary-container/20 to-primary-container/40',
+          badgeBg: 'bg-tertiary-fixed text-on-tertiary-fixed border-tertiary-fixed-dim/40',
+          icon: 'stars',
+        };
+      case 'edtech':
+        return {
+          gradient: 'from-secondary-container/20 to-secondary-container/40',
+          badgeBg: 'bg-secondary-container/80 text-secondary border-secondary/20',
+          icon: 'school',
+        };
+      case 'genai':
+        return {
+          gradient: 'from-[#5B9BFF]/20 to-[#5B9BFF]/40',
+          badgeBg: 'bg-[#5B9BFF]/20 text-[#2C64C7] border-[#5B9BFF]/30',
+          icon: 'psychology',
+        };
+      default:
+        return {
+          gradient: 'from-tertiary-fixed/20 to-tertiary-fixed/40',
+          badgeBg: 'bg-surface-elevated text-on-surface border-outline-variant',
+          icon: 'experiment',
+        };
+    }
+  };
+
+  const bannerStyle = getBannerStyle();
 
   return (
     <div className="relative group perspective-900 w-full min-h-[460px]">
@@ -66,7 +96,7 @@ export const ProjectCard3D: React.FC<ProjectCard3DProps> = ({ project, onOpenCas
           duration: isReducedMotion ? 0.01 : 0.5,
           ease: [0.16, 1, 0.3, 1],
         }}
-        className="relative w-full h-full rounded-card bg-surface-elevated border border-outline-variant p-space-md shadow-sm preserve-3d flex flex-col justify-between hover:-translate-y-1 hover:shadow-lg focus-within:-translate-y-1 transition-shadow"
+        className="relative w-full h-full rounded-[24px] bg-surface-elevated border border-[#EADFCF] p-4 md:p-6 shadow-sm preserve-3d flex flex-col justify-between hover:-translate-y-1 hover:shadow-[0_8px_20px_rgba(31,42,68,0.06)] transition-all duration-500"
       >
         {/* Pointer Glare Highlight */}
         <motion.div
@@ -74,7 +104,7 @@ export const ProjectCard3D: React.FC<ProjectCard3DProps> = ({ project, onOpenCas
             opacity: isFlipped ? 0 : glareOpacity,
             background: `radial-gradient(circle at ${glareX.get()}% ${glareY.get()}%, rgba(255,255,255,0.4), transparent 60%)`,
           }}
-          className="absolute inset-0 rounded-card pointer-events-none z-30"
+          className="absolute inset-0 rounded-[24px] pointer-events-none z-30"
         />
 
         {/* FRONT FACE */}
@@ -83,25 +113,29 @@ export const ProjectCard3D: React.FC<ProjectCard3DProps> = ({ project, onOpenCas
             isFlipped ? 'pointer-events-none invisible' : 'visible'
           }`}
         >
-          {/* Banner Graphic Frame */}
-          <div className="relative w-full h-48 rounded-squircle overflow-hidden flex items-center justify-center p-2 bg-surface-low border border-outline-variant/30">
+          {/* Banner Graphic Frame from Stitch */}
+          <div
+            className={`relative w-full h-48 rounded-[16px] bg-gradient-to-br ${bannerStyle.gradient} overflow-hidden flex items-center justify-center p-2`}
+          >
             {project.badgeText && (
-              <div className="absolute top-2 left-2 z-10 flex items-center gap-1 px-3 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-code text-xs font-bold shadow-sm border border-tertiary-fixed-dim/40">
-                <span className="material-symbols-outlined text-[14px]">stars</span>
+              <div
+                className={`absolute top-2 left-2 z-10 flex items-center gap-1 px-2.5 py-1 rounded-full font-label text-xs shadow-sm border ${bannerStyle.badgeBg}`}
+              >
+                <span className="material-symbols-outlined text-[14px]">{bannerStyle.icon}</span>
                 <span>{project.badgeText}</span>
               </div>
             )}
             <img
               src={project.imagePlaceholder}
               alt={project.title}
-              className="w-full h-full object-cover rounded-squircle transition-transform duration-500 group-hover:scale-105"
+              className="w-full h-full object-cover rounded-[14px] transition-transform duration-500 group-hover:scale-105"
             />
           </div>
 
-          {/* Content info */}
-          <div className="pt-space-md pb-space-sm flex-1 flex flex-col justify-between">
+          {/* Content Info */}
+          <div className="pt-4 pb-2 flex-1 flex flex-col justify-between">
             <div>
-              <h3 className="font-headline text-xl md:text-2xl text-on-surface font-bold tracking-tight">
+              <h3 className="font-headline font-bold text-xl md:text-2xl text-on-surface tracking-tight">
                 {project.title}
               </h3>
               <p className="font-body text-sm text-on-surface-variant mt-1 line-clamp-2">
@@ -109,8 +143,8 @@ export const ProjectCard3D: React.FC<ProjectCard3DProps> = ({ project, onOpenCas
               </p>
             </div>
 
-            {/* Tech Stack Pills */}
-            <div className="flex flex-wrap gap-1.5 mt-space-md">
+            {/* Tech Chips */}
+            <div className="flex flex-wrap gap-1.5 mt-4">
               {project.techStack.map((tech) => (
                 <span
                   key={tech}
@@ -122,24 +156,24 @@ export const ProjectCard3D: React.FC<ProjectCard3DProps> = ({ project, onOpenCas
             </div>
           </div>
 
-          {/* Card Footer Actions */}
-          <div className="pt-space-sm mt-space-xs border-t border-outline-variant/40 flex items-center justify-between">
+          {/* Actions Row */}
+          <div className="pt-3 mt-1 border-t border-[#EADFCF]/60 flex items-center justify-between">
             <button
               type="button"
               onClick={toggleFlip}
-              className="font-label text-xs md:text-sm text-primary-container font-semibold hover:underline flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-primary-container rounded-md"
+              className="font-label text-xs md:text-sm text-primary-container font-semibold hover:underline flex items-center gap-1"
             >
-              <span>View details & results</span>
-              <span className="material-symbols-outlined text-[16px]">swap_horiz</span>
+              <span>View impact details</span>
+              <span className="material-symbols-outlined text-[14px]">swap_horiz</span>
             </button>
 
             <a
               href={`/#/work/${project.slug}`}
               onClick={() => trackEvent('project_case_study_click', { project: project.slug })}
               aria-label={`View ${project.title} case study`}
-              className="w-9 h-9 rounded-full bg-surface-low flex items-center justify-center text-on-surface hover:bg-primary-container hover:text-white transition-colors"
+              className="w-8 h-8 rounded-full bg-surface-low flex items-center justify-center text-on-surface hover:bg-primary-container hover:text-white transition-colors"
             >
-              <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+              <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
             </a>
           </div>
         </div>
@@ -147,12 +181,12 @@ export const ProjectCard3D: React.FC<ProjectCard3DProps> = ({ project, onOpenCas
         {/* BACK FACE (Rotated 180deg) */}
         <div
           style={{ transform: 'rotateY(180deg)' }}
-          className={`absolute inset-0 p-space-md rounded-card bg-surface-elevated border border-outline-variant flex flex-col justify-between backface-hidden ${
+          className={`absolute inset-0 p-4 md:p-6 rounded-[24px] bg-surface-elevated border border-[#EADFCF] flex flex-col justify-between backface-hidden ${
             !isFlipped ? 'pointer-events-none invisible' : 'visible'
           }`}
         >
           <div className="space-y-3 overflow-y-auto pr-1">
-            <div className="flex items-center justify-between border-b border-outline-variant/40 pb-2">
+            <div className="flex items-center justify-between border-b border-[#EADFCF]/60 pb-2">
               <h4 className="font-headline font-bold text-lg text-on-surface">{project.title}</h4>
               <button
                 type="button"
@@ -169,7 +203,7 @@ export const ProjectCard3D: React.FC<ProjectCard3DProps> = ({ project, onOpenCas
             </div>
 
             <div>
-              <p className="font-code text-xs font-bold text-secondary uppercase">Key Impact:</p>
+              <p className="font-code text-xs font-bold text-secondary uppercase">Impact Result:</p>
               <p className="font-body text-sm text-on-surface-variant">{project.impactResult}</p>
             </div>
 
@@ -190,20 +224,20 @@ export const ProjectCard3D: React.FC<ProjectCard3DProps> = ({ project, onOpenCas
             )}
           </div>
 
-          <div className="pt-3 border-t border-outline-variant/40 flex items-center justify-between gap-2">
+          <div className="pt-3 border-t border-[#EADFCF]/60 flex items-center justify-between gap-2">
             <a
               href={`/#/work/${project.slug}`}
               className="px-4 py-2 rounded-full bg-primary-container text-white font-label text-xs font-bold hover:bg-primary transition-all shadow-sm"
             >
-              Full Case Study →
+              Case study →
             </a>
             <a
               href={project.githubUrl}
               target="_blank"
               rel="noreferrer"
-              className="px-4 py-2 rounded-full bg-surface-low text-on-surface font-label text-xs font-semibold border border-outline-variant/40 hover:bg-surface-container"
+              className="px-4 py-2 rounded-full bg-surface-elevated text-on-surface font-label text-xs font-semibold border border-[#EADFCF] hover:bg-surface-low"
             >
-              GitHub Repo ↗
+              GitHub ↗
             </a>
           </div>
         </div>

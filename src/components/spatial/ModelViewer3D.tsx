@@ -5,7 +5,6 @@ import * as THREE from 'three';
 import { useAnimationGate } from '../../motion/tokens';
 import { trackEvent } from '../../analytics/AnalyticsProvider';
 
-// Procedural rotating Torus Knot component with brand colors
 function ProceduralTorusKnot({ autoRotate }: { autoRotate: boolean }) {
   const meshRef = useRef<THREE.Mesh>(null);
 
@@ -37,21 +36,17 @@ function ProceduralTorusKnot({ autoRotate }: { autoRotate: boolean }) {
         roughness={0.2}
         metalness={0.8}
         emissive="#AE3123"
-        emissiveIntensity={0.2}
+        emissiveIntensity={0.25}
       />
     </mesh>
   );
 }
 
-// GLTF loader component with procedural fallback
 function ModelMesh({ autoRotate }: { autoRotate: boolean }) {
-  const [loadError, setLoadError] = useState(false);
-
   try {
     const gltf = useGLTF('/models/showcase.glb', true);
     return <primitive object={gltf.scene} scale={1.5} />;
   } catch (err) {
-    // If GLB model is missing, render procedural torus knot seamlessly
     return <ProceduralTorusKnot autoRotate={autoRotate} />;
   }
 }
@@ -60,11 +55,9 @@ export const ModelViewer3D: React.FC = () => {
   const { isReducedMotion } = useAnimationGate();
   const [isPlaying, setIsPlaying] = useState(!isReducedMotion);
   const [autoRotate, setAutoRotate] = useState(true);
-  const [wireframe, setWireframe] = useState(false);
   const [webglSupported, setWebglSupported] = useState(true);
 
   useEffect(() => {
-    // Test WebGL context support
     try {
       const canvas = document.createElement('canvas');
       const supported = !!(
@@ -79,39 +72,68 @@ export const ModelViewer3D: React.FC = () => {
 
   if (!webglSupported || isReducedMotion || !isPlaying) {
     return (
-      <div className="relative w-full h-[400px] rounded-card bg-[#121829] border border-[#2C3760] flex flex-col items-center justify-center p-6 text-center overflow-hidden">
-        {/* Static Canvas Fallback Graphic */}
-        <div className="relative w-48 h-48 flex items-center justify-center mb-4">
-          <svg className="w-full h-full text-primary-container" viewBox="0 0 200 200" fill="none">
-            <polygon points="100,20 170,60 100,100 30,60" fill="#79F3EA" fillOpacity="0.8" />
-            <polygon points="100,100 170,60 170,140 100,180" fill="#FF6B57" fillOpacity="0.8" />
-            <polygon points="100,100 30,60 30,140 100,180" fill="#FFC93C" fillOpacity="0.8" />
-          </svg>
+      <div className="rounded-[24px] bg-[#121829] border border-[#2C3760] p-space-md text-white flex flex-col justify-between shadow-xl relative overflow-hidden min-h-[460px]">
+        <div className="relative z-10 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-3 h-3 rounded-full bg-primary-container" />
+            <span className="font-code text-xs text-gray-300">viewport: spatial_artifact_v4.glb</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#1B2340] border border-[#2C3760] font-code text-xs text-[#79F3EA]">
+              WebGL 2.0
+            </span>
+          </div>
         </div>
-        <p className="font-headline font-bold text-white text-lg mb-2">3D Spatial Viewport</p>
-        <p className="font-body text-xs text-gray-400 max-w-sm mb-4">
-          {isReducedMotion
-            ? 'Reduced motion enabled. Real-time 3D rotation is paused.'
-            : 'Interactive WebGL viewport is paused to conserve GPU resources.'}
-        </p>
-        <button
-          type="button"
-          onClick={() => {
-            setIsPlaying(true);
-            trackEvent('3d_play_click');
-          }}
-          className="px-5 py-2.5 rounded-full bg-primary-container text-white font-label text-sm font-bold shadow-md hover:bg-primary transition-all flex items-center gap-2"
-        >
-          <span className="material-symbols-outlined text-[18px]">play_arrow</span>
-          <span>Play 3D Interactive Stage</span>
-        </button>
+
+        {/* Isometric SVG Crystal Stage from Stitch Design */}
+        <div className="relative my-auto flex flex-col items-center justify-center h-72">
+          <svg className="w-48 h-48 drop-shadow-[0_15px_30px_rgba(121,243,234,0.35)]" fill="none" viewBox="0 0 200 200">
+            <defs>
+              <linearGradient id="facetA" x1="0%" x2="100%" y1="0%" y2="100%">
+                <stop offset="0%" stopColor="#FF6B57" />
+                <stop offset="100%" stopColor="#AE3123" />
+              </linearGradient>
+              <linearGradient id="facetB" x1="0%" x2="100%" y1="0%" y2="100%">
+                <stop offset="0%" stopColor="#79F3EA" />
+                <stop offset="100%" stopColor="#006A65" />
+              </linearGradient>
+              <linearGradient id="facetC" x1="0%" x2="100%" y1="100%" y2="0%">
+                <stop offset="0%" stopColor="#FFDF9A" />
+                <stop offset="100%" stopColor="#C29400" />
+              </linearGradient>
+            </defs>
+            <polygon points="100,20 170,60 100,100 30,60" fill="url(#facetB)" fillOpacity="0.9" />
+            <polygon points="100,100 170,60 170,140 100,180" fill="url(#facetA)" fillOpacity="0.85" />
+            <polygon points="100,100 30,60 30,140 100,180" fill="url(#facetC)" fillOpacity="0.95" />
+            <line x1="100" y1="20" x2="100" y2="100" stroke="#FFFFFF" strokeOpacity="0.5" strokeWidth="1.5" />
+            <line x1="100" y1="100" x2="170" y2="60" stroke="#FFFFFF" strokeOpacity="0.5" strokeWidth="1.5" />
+            <line x1="100" y1="100" x2="30" y2="60" stroke="#FFFFFF" strokeOpacity="0.5" strokeWidth="1.5" />
+            <line x1="100" y1="100" x2="100" y2="180" stroke="#FFFFFF" strokeOpacity="0.5" strokeWidth="1.5" />
+          </svg>
+
+          <button
+            type="button"
+            onClick={() => {
+              setIsPlaying(true);
+              trackEvent('3d_play_click');
+            }}
+            className="mt-4 px-5 py-2.5 rounded-full bg-primary-container text-white font-label text-xs font-bold shadow-md hover:bg-primary transition-all flex items-center gap-2"
+          >
+            <span className="material-symbols-outlined text-[18px]">play_arrow</span>
+            <span>Play Interactive 3D Stage</span>
+          </button>
+        </div>
+
+        <div className="relative z-10 pt-2 border-t border-[#2C3760] flex items-center justify-between text-xs text-gray-400 font-code">
+          <span>Vertices: 14,820 | Materials: 3</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="relative w-full h-[460px] rounded-card bg-[#121829] border border-[#2C3760] p-space-md text-white flex flex-col justify-between shadow-xl overflow-hidden select-none">
-      {/* Top Status Bar */}
+    <div className="rounded-[24px] bg-[#121829] border border-[#2C3760] p-[#1.5rem] text-white flex flex-col justify-between shadow-xl relative overflow-hidden min-h-[460px] select-none">
+      {/* Top Status Bar from Stitch */}
       <div className="relative z-10 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="w-3 h-3 rounded-full bg-primary-container animate-pulse" />
@@ -127,20 +149,26 @@ export const ModelViewer3D: React.FC = () => {
         </div>
       </div>
 
-      {/* 3D Canvas viewport */}
+      {/* 3D Canvas Stage */}
       <div className="relative my-auto w-full h-72 cursor-grab active:cursor-grabbing">
+        {/* Orbital decorative rings */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-25">
+          <div className="w-64 h-64 border border-dashed border-[#79F3EA] rounded-full animate-spin [animation-duration:30s]" />
+          <div className="absolute w-44 h-44 border border-[#FF6B57] rounded-full" />
+        </div>
+
         <Suspense
           fallback={
             <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 gap-2">
               <div className="w-8 h-8 rounded-full border-2 border-t-primary-container border-r-transparent animate-spin" />
-              <span className="font-code text-xs">Loading WebGL 3D Mesh...</span>
+              <span className="font-code text-xs">Loading WebGL Stage...</span>
             </div>
           }
         >
           <Canvas
             dpr={[1, Math.min(window.devicePixelRatio || 1, 2)]}
             camera={{ position: [0, 0, 4.5], fov: 50 }}
-            className="w-full h-full"
+            className="w-full h-full relative z-10"
           >
             <ambientLight intensity={0.7} />
             <directionalLight position={[5, 5, 5]} intensity={1.2} />
@@ -156,15 +184,15 @@ export const ModelViewer3D: React.FC = () => {
           </Canvas>
         </Suspense>
 
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-[#1B2340]/90 border border-[#2C3760] font-code text-[11px] text-gray-300 flex items-center gap-1.5 shadow-md pointer-events-none">
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-[#1B2340]/90 border border-[#2C3760] font-code text-[11px] text-gray-300 flex items-center gap-1.5 shadow-md pointer-events-none z-20">
           <span className="material-symbols-outlined text-[14px] text-primary-container">touch_app</span>
-          <span>Drag to rotate • Zoom disabled for scroll safety</span>
+          <span>Drag to rotate • Realtime PBR Shader</span>
         </div>
       </div>
 
-      {/* Bottom Controls */}
-      <div className="relative z-10 pt-space-xs border-t border-[#2C3760] flex flex-wrap items-center justify-between gap-space-xs text-xs text-gray-400 font-code">
-        <div className="flex items-center gap-space-md">
+      {/* Bottom Controls Bar */}
+      <div className="relative z-10 pt-2 border-t border-[#2C3760] flex flex-wrap items-center justify-between gap-2 text-xs text-gray-400 font-code">
+        <div className="flex items-center gap-4">
           <label className="flex items-center gap-1.5 cursor-pointer">
             <input
               type="checkbox"
