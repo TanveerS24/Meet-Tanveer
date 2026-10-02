@@ -1,5 +1,5 @@
 /// <reference types="vite/client" />
-/// <reference types="@react-three/fiber" />
+import type { ThreeElements } from '@react-three/fiber';
 
 interface ImportMetaEnv {
   readonly VITE_WEB3FORMS_ACCESS_KEY?: string;
@@ -14,14 +14,16 @@ interface ImportMeta {
 // React Three Fiber JSX Intrinsic Elements type declaration for TypeScript
 declare global {
   namespace JSX {
-    interface IntrinsicElements {
-      mesh: any;
-      torusKnotGeometry: any;
-      meshStandardMaterial: any;
-      primitive: any;
-      ambientLight: any;
-      directionalLight: any;
-      pointLight: any;
+    interface IntrinsicElements extends ThreeElements {
+      [elemName: string]: any;
+    }
+  }
+}
+
+declare module 'react' {
+  namespace JSX {
+    interface IntrinsicElements extends ThreeElements {
+      [elemName: string]: any;
     }
   }
 }
