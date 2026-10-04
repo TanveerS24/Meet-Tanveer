@@ -59,6 +59,7 @@ export const MiniTerminal: React.FC = () => {
       if (isDark) {
         document.documentElement.classList.remove('dark');
         localStorage.setItem('theme', 'light');
+        window.dispatchEvent(new CustomEvent('sun-theme-light-transition'));
       } else {
         document.documentElement.classList.add('dark');
         localStorage.setItem('theme', 'dark');

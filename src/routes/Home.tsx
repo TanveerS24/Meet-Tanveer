@@ -6,8 +6,6 @@ import { Typewriter } from '../components/hero/Typewriter';
 import { HeroBlobs } from '../components/hero/HeroBlobs';
 import { ProjectCard3D } from '../components/work/ProjectCard3D';
 import { ShippedStrip } from '../components/work/ShippedStrip';
-import { ModelViewer3D } from '../components/spatial/ModelViewer3D';
-import { GalleryMasonry } from '../components/spatial/GalleryMasonry';
 import { Timeline } from '../components/journey/Timeline';
 import { TrophyBadge } from '../components/proof/TrophyBadge';
 import { LeetCodeDonut } from '../components/proof/LeetCodeDonut';
@@ -139,50 +137,20 @@ export const Home: React.FC = () => {
             <ShippedStrip moreProjects={moreProjects} />
           </section>
 
-          {/* ========================================== */}
-          {/* 3. 3D CORNER SECTION */}
-          {/* ========================================== */}
-          <section className="w-full max-w-[1320px] mx-auto px-margin-mobile md:px-margin py-space-xl" id="3d-corner">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-space-sm mb-space-lg">
-              <div>
-                <div className="inline-flex items-center gap-space-xs font-code text-xs text-secondary uppercase tracking-wider font-bold mb-1">
-                  <span>02 // Spatial Computing & Graphics</span>
-                </div>
-                <h2 className="font-headline text-3xl md:text-4xl text-on-surface tracking-tight font-extrabold">
-                  3D Corner & Spatial Prototypes
-                </h2>
-              </div>
-
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary-container/40 border border-secondary/30 text-secondary font-label text-xs shadow-sm">
-                <span className="material-symbols-outlined text-[18px]">verified</span>
-                <span>AR prototyping intern at Roche, 2026</span>
-              </div>
-            </div>
-
-            {/* Split Showcase: 60% Interactive Stage | 40% Gallery */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-stretch">
-              <div className="lg:col-span-7">
-                <ModelViewer3D />
-              </div>
-              <div className="lg:col-span-5">
-                <GalleryMasonry />
-              </div>
-            </div>
-          </section>
 
           {/* ========================================== */}
-          {/* 4. JOURNEY & EXPERIENCE TIMELINE */}
+          {/* 3. JOURNEY & EXPERIENCE TIMELINE */}
           {/* ========================================== */}
           <Timeline />
 
           {/* ========================================== */}
-          {/* 5. PROOF & RECRUITER METRICS */}
+          {/* 4. PROOF & RECRUITER METRICS */}
           {/* ========================================== */}
           <section className="w-full max-w-[1320px] mx-auto px-margin-mobile md:px-margin py-space-xl" id="proof">
             <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-space-sm mb-space-lg">
               <div>
                 <div className="inline-flex items-center gap-space-xs font-code text-xs text-primary-container uppercase tracking-wider font-bold mb-1">
-                  <span>04 // Verified Metrics</span>
+                  <span>03 // Verified Metrics</span>
                 </div>
                 <h2 className="font-headline text-3xl md:text-4xl text-on-surface tracking-tight font-extrabold">
                   Proof & Engineering Rigor
@@ -249,19 +217,19 @@ export const Home: React.FC = () => {
           </section>
 
           {/* ========================================== */}
-          {/* 6. SKILLS MARQUEE */}
+          {/* 5. SKILLS MARQUEE */}
           {/* ========================================== */}
           <MarqueeSkills />
 
           {/* ========================================== */}
-          {/* 7. ABOUT & FUN FACTS */}
+          {/* 6. ABOUT & FUN FACTS */}
           {/* ========================================== */}
           <section className="w-full max-w-[1120px] mx-auto px-margin-mobile md:px-margin py-space-xl" id="about">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-center">
               {/* Bio Summary */}
               <div className="lg:col-span-6 space-y-space-md">
                 <div className="inline-flex items-center gap-space-xs font-code text-xs text-secondary uppercase tracking-wider font-bold">
-                  <span>06 // The Human Behind The Terminal</span>
+                  <span>05 // The Human Behind The Terminal</span>
                 </div>
                 <h2 className="font-headline text-3xl md:text-4xl text-on-surface tracking-tight font-extrabold leading-tight">
                   Obsessed with tangible pixels, low latencies, and playful tools.
@@ -292,12 +260,12 @@ export const Home: React.FC = () => {
           </section>
 
           {/* ========================================== */}
-          {/* 8. INTERACTIVE CLI TERMINAL */}
+          {/* 7. INTERACTIVE CLI TERMINAL */}
           {/* ========================================== */}
           <MiniTerminal />
 
           {/* ========================================== */}
-          {/* 9. CORAL CONTACT BAND */}
+          {/* 8. CORAL CONTACT BAND */}
           {/* ========================================== */}
           <ContactForm />
         </div>

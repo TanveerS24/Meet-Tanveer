@@ -20,6 +20,7 @@ export const ThemeToggle: React.FC = () => {
       } else {
         document.documentElement.classList.remove('dark');
         localStorage.setItem('theme', 'light');
+        window.dispatchEvent(new CustomEvent('sun-theme-light-transition'));
       }
       setIsDark(nextIsDark);
       trackEvent('theme_toggle', { mode: nextIsDark ? 'dark' : 'light' });

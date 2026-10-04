@@ -18,7 +18,7 @@ export const Timeline: React.FC = () => {
     <section className="w-full max-w-[1120px] mx-auto px-margin-mobile md:px-margin py-space-xl" id="journey">
       <div className="text-center max-w-xl mx-auto mb-space-xl">
         <div className="inline-flex items-center gap-space-xs font-code text-xs text-primary-container uppercase tracking-wider font-bold mb-1">
-          <span>03 // Path & Milestones</span>
+          <span>02 // Path & Milestones</span>
         </div>
         <h2 className="font-headline text-3xl md:text-4xl text-on-surface tracking-tight font-extrabold">
           Journey & Experience

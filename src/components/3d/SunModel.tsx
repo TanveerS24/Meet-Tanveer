@@ -1,71 +1,54 @@
 import React, { useRef, useMemo, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useGLTF, Center, OrbitControls, Bounds } from '@react-three/drei';
+import { useGLTF, Center, Environment, Float } from '@react-three/drei';
 import * as THREE from 'three';
-import { useAnimationGate } from '../../motion/tokens';
 
 /**
- * Inner component that renders the actual Blender Sun GLB model.
- *
- * Key decisions:
- * - We do NOT call computeVertexNormals(). Blender already exports correct
- *   smooth-shaded normals; recalculating them produces a faceted, boxy look.
- * - We do NOT force flatShading = false either — the materials are already
- *   smooth in the GLB. Touching them was causing needless recalculation.
- * - We clone the scene so React strict-mode double-mounts don't share state.
+ * Enhanced 3D Sun Mesh with vibrant golden PBR materials, smooth rotation, and emissive warmth.
  */
-function SunMesh({ autoRotate }: { autoRotate: boolean }) {
+function SunMesh({ speed = 1 }: { speed?: number }) {
   const groupRef = useRef<THREE.Group>(null);
+  const { scene } = useGLTF('/models/Sun.glb');
 
-  const { scene } = useGLTF('/data/models/Sun.glb');
-
-  // Clone scene — preserve original normals and materials exactly as Blender exported them
+  // Clone scene & dress in rich golden PBR materials so the model is never naked
   const clonedScene = useMemo(() => {
     const cloned = scene.clone(true);
 
     cloned.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
 
-        // Ensure double-sided rendering so no faces disappear at angles
         if (mesh.material) {
           const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
           mats.forEach((mat) => {
             mat.side = THREE.DoubleSide;
-            // Ensure the material receives shadows and lighting properly
-            if ((mat as THREE.MeshStandardMaterial).metalness !== undefined) {
-              // Keep existing metalness/roughness — don't overwrite
+
+            // Apply vibrant warm golden Sun styling
+            if (mat instanceof THREE.MeshStandardMaterial || 'color' in mat) {
+              const stdMat = mat as THREE.MeshStandardMaterial;
+              // Radiant sun gold base
+              stdMat.color = new THREE.Color('#FFB300');
+              stdMat.roughness = 0.22;
+              stdMat.metalness = 0.35;
+              // Warm golden-orange emissive core
+              stdMat.emissive = new THREE.Color('#FF7700');
+              stdMat.emissiveIntensity = 0.45;
             }
+            mat.needsUpdate = true;
           });
         }
       }
     });
-
     return cloned;
   }, [scene]);
 
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     if (!groupRef.current) return;
-
-    // Continuous smooth rotation around Y axis
-    if (autoRotate) {
-      groupRef.current.rotation.y += delta * 0.35;
-    }
-
-    // Smooth mouse parallax tilt via lerp
-    const targetX = state.pointer.y * 0.15;
-    const targetZ = -state.pointer.x * 0.15;
-
-    groupRef.current.rotation.x = THREE.MathUtils.lerp(
-      groupRef.current.rotation.x,
-      targetX,
-      0.05
-    );
-    groupRef.current.rotation.z = THREE.MathUtils.lerp(
-      groupRef.current.rotation.z,
-      targetZ,
-      0.05
-    );
+    // Elegant, smooth spin
+    groupRef.current.rotation.y += delta * 1.8 * speed;
+    groupRef.current.rotation.z += delta * 0.3 * speed;
   });
 
   return (
@@ -76,79 +59,105 @@ function SunMesh({ autoRotate }: { autoRotate: boolean }) {
 }
 
 // Preload the GLB
-useGLTF.preload('/data/models/Sun.glb');
+useGLTF.preload('/models/Sun.glb');
 
-interface SunModelProps {
+class ThreeErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback?: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode; fallback?: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: any, errorInfo: any) {
+    console.error('Three.js Canvas Error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        this.props.fallback || (
+          <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center">
+            <div className="w-32 h-32 rounded-full bg-amber-400/20 flex items-center justify-center animate-pulse">
+              <span className="material-symbols-outlined text-6xl text-amber-500 animate-spin">wb_sunny</span>
+            </div>
+          </div>
+        )
+      );
+    }
+    return this.props.children;
+  }
+}
+
+export interface SunModelProps {
   className?: string;
-  autoRotate?: boolean;
+  speed?: number;
 }
 
 export const SunModel: React.FC<SunModelProps> = ({
   className = 'w-full h-full',
-  autoRotate = true,
+  speed = 1.0,
 }) => {
-  const { isReducedMotion } = useAnimationGate();
-
   return (
-    <div className={`relative ${className}`}>
-      <Canvas
-        dpr={[1, Math.min(window.devicePixelRatio || 1, 2)]}
-        camera={{ position: [0, 0, 8], fov: 40 }}
-        className="w-full h-full"
-        gl={{
-          antialias: true,
-          alpha: true,
-          toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 1.0,
-        }}
-      >
-        {/*
-          Lighting rig designed to match Blender's default viewport shading.
-          - Soft hemisphere fill so no face is pure black
-          - One key directional light from the top-right (like Blender's default)
-          - One warm fill from below-left to bring out the golden hue
-          No Environment map — it was adding strong reflections that made the
-          golden material look washed-out and grey.
-        */}
-        <hemisphereLight
-          color="#FFF8E7"
-          groundColor="#5C3D00"
-          intensity={0.8}
-        />
-        <directionalLight
-          position={[5, 6, 4]}
-          color="#FFFFFF"
-          intensity={1.5}
-          castShadow={false}
-        />
-        <directionalLight
-          position={[-3, -2, -3]}
-          color="#FFAE42"
-          intensity={0.5}
-        />
-
-        <Suspense
-          fallback={
-            <mesh>
-              <sphereGeometry args={[1, 16, 16]} />
-              <meshBasicMaterial color="#FFC93C" wireframe />
-            </mesh>
-          }
+    <div className={`relative ${className} select-none`}>
+      <ThreeErrorBoundary>
+        <Canvas
+          dpr={[1, Math.min(window.devicePixelRatio || 1, 2)]}
+          camera={{ position: [0, 0, 5.2], fov: 45 }}
+          className="w-full h-full"
+          gl={{
+            antialias: true,
+            alpha: true,
+            toneMapping: THREE.ACESFilmicToneMapping,
+            toneMappingExposure: 1.4,
+          }}
         >
-          <Bounds fit clip observe margin={1.4}>
-            <Center>
-              <SunMesh autoRotate={!isReducedMotion && autoRotate} />
-            </Center>
-          </Bounds>
-        </Suspense>
+          {/* Ambient + Directional lighting rig for rich golden sheen */}
+          <ambientLight intensity={0.9} color="#FFF5E1" />
+          <hemisphereLight
+            color="#FFF8E7"
+            groundColor="#663300"
+            intensity={1.1}
+          />
+          <directionalLight
+            position={[5, 8, 4]}
+            color="#FFFFFF"
+            intensity={2.2}
+          />
+          <directionalLight
+            position={[-5, -4, -3]}
+            color="#FFA726"
+            intensity={1.2}
+          />
+          <pointLight position={[0, 0, 4]} intensity={1.5} color="#FFD54F" />
 
-        <OrbitControls
-          enableZoom={false}
-          enablePan={false}
-          autoRotate={false}
-          dampingFactor={0.05}
-        />
-      </Canvas>
+          <Suspense
+            fallback={
+              <mesh>
+                <sphereGeometry args={[1.5, 32, 32]} />
+                <meshStandardMaterial
+                  color="#FFB300"
+                  emissive="#FF8F00"
+                  emissiveIntensity={0.5}
+                  roughness={0.2}
+                />
+              </mesh>
+            }
+          >
+            <Environment preset="sunset" />
+            <Float speed={2} rotationIntensity={0.4} floatIntensity={0.6}>
+              <Center scale={1.75}>
+                <SunMesh speed={speed} />
+              </Center>
+            </Float>
+          </Suspense>
+        </Canvas>
+      </ThreeErrorBoundary>
     </div>
   );
 };

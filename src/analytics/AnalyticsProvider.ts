@@ -51,7 +51,7 @@ export function trackEvent(eventName: string, params: Record<string, any> = {}):
 
   console.log(`[Analytics Event] ${eventName}:`, payload);
 
-  if (endpoint) {
+  if (endpoint && !endpoint.includes('your-analytics-provider.com') && !endpoint.includes('example.com')) {
     try {
       fetch(endpoint, {
         method: 'POST',
