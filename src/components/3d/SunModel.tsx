@@ -1,12 +1,12 @@
 import React, { useRef, useMemo, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useGLTF, Center, Environment, Float } from '@react-three/drei';
+import { useGLTF, Center, Environment, Float, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
 /**
  * Enhanced 3D Sun Mesh with vibrant golden PBR materials, smooth rotation, and emissive warmth.
  */
-function SunMesh({ speed = 1 }: { speed?: number }) {
+function SunMesh({ speed = 1, autoRotate = true }: { speed?: number; autoRotate?: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF('/models/Sun.glb');
 
@@ -45,7 +45,7 @@ function SunMesh({ speed = 1 }: { speed?: number }) {
   }, [scene]);
 
   useFrame((_, delta) => {
-    if (!groupRef.current) return;
+    if (!groupRef.current || !autoRotate) return;
     // Elegant, smooth spin
     groupRef.current.rotation.y += delta * 1.8 * speed;
     groupRef.current.rotation.z += delta * 0.3 * speed;
@@ -97,11 +97,13 @@ class ThreeErrorBoundary extends React.Component<
 export interface SunModelProps {
   className?: string;
   speed?: number;
+  autoRotate?: boolean;
 }
 
 export const SunModel: React.FC<SunModelProps> = ({
   className = 'w-full h-full',
   speed = 1.0,
+  autoRotate = true,
 }) => {
   return (
     <div className={`relative ${className} select-none`}>
@@ -117,6 +119,7 @@ export const SunModel: React.FC<SunModelProps> = ({
             toneMappingExposure: 1.4,
           }}
         >
+          <OrbitControls enableZoom={false} enablePan={false} />
           {/* Ambient + Directional lighting rig for rich golden sheen */}
           <ambientLight intensity={0.9} color="#FFF5E1" />
           <hemisphereLight
@@ -152,7 +155,7 @@ export const SunModel: React.FC<SunModelProps> = ({
             <Environment preset="sunset" />
             <Float speed={2} rotationIntensity={0.4} floatIntensity={0.6}>
               <Center scale={1.75}>
-                <SunMesh speed={speed} />
+                <SunMesh speed={speed} autoRotate={autoRotate} />
               </Center>
             </Float>
           </Suspense>
